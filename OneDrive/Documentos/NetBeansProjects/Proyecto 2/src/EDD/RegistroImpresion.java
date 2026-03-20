@@ -12,23 +12,23 @@ import Modelos.Documento;
  */
 public class RegistroImpresion {
     private Documento documento;
-    private long etiquetaT; 
+    private long timetag; 
 
     public RegistroImpresion(Documento documento, long etiquetaT) {
         this.documento = documento;
-        this.etiquetaT = etiquetaT;
+        this.timetag = etiquetaT;
     }
 
     public Documento getDocumento() {
         return documento;
     }
 
-    public long getEtiquetaT() {
-        return etiquetaT;
+    public long getTimetag() {
+        return timetag;
     }
 
-    public void setEtiquetaT(long etiquetaT) {
-        this.etiquetaT = etiquetaT;
+    public void setTimetag(long timetag) {
+        this.timetag = timetag;
     }
     
     
