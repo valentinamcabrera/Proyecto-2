@@ -48,11 +48,11 @@ public class HashTable {
      * enlaza el nuevo nodo al inicio de la lista correspondiente (O(1)).
      * @param usuario El propietario del documento.
      * @param documento El archivo enviado a la cola.
-     * @param etiquetaT El puente lógico que conecta con la posición en el Montículo.
+     * @param timetag El puente lógico que conecta con la posición en el Montículo.
      */
-    public void insertarRegistro(Usuario usuario, Documento documento, long etiquetaT) {
+    public void insertarRegistro(Usuario usuario, Documento documento, long timetag) {
         int indice = hashFunction(usuario.getNombre());
-        NodoHash nuevoNodo = new NodoHash(usuario, documento, etiquetaT);
+        NodoHash nuevoNodo = new NodoHash(usuario, documento, timetag);
 
         if (tabla[indice] == null) {
             tabla[indice] = nuevoNodo;

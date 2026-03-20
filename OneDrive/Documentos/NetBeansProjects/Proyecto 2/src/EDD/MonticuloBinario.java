@@ -76,15 +76,15 @@ public class MonticuloBinario {
     /**
      * Inserta un nuevo documento en la cola de prioridad sin información del propietario.
      * @param doc El documento a encolar.
-     * @param etiquetaT El valor numérico de prioridad calculado por el reloj y el sistema.
+     * @param timetag El valor numérico de prioridad calculado por el reloj y el sistema.
      * @throws IllegalStateException Si el montículo ha alcanzado su capacidad máxima.
      */
-    public void insertar(Documento doc, long etiquetaT) {
+    public void insertar(Documento doc, long timetag) {
         if (estaLleno()) {
             throw new IllegalStateException("La cola de impresión está llena. Capacidad máxima alcanzada.");
         }
         // Crear el registro y lo coloca en la última posición disponible del arreglo
-        RegistroImpresion nuevoRegistro = new RegistroImpresion(doc, etiquetaT);
+        RegistroImpresion nuevoRegistro = new RegistroImpresion(doc, timetag);
         monticulo[tamano] = nuevoRegistro;
         //Reordenar el árbol hacia arriba para mantener la propiedad del Min-Heap
         flotar(tamano);
@@ -100,7 +100,7 @@ public class MonticuloBinario {
         int indiceActual = indice;
         int indicePadre = getPadre(indiceActual);
 
-        while (indiceActual > 0 && monticulo[indiceActual].getEtiquetaT() < monticulo[indicePadre].getEtiquetaT()) {
+        while (indiceActual > 0 && monticulo[indiceActual].getTimetag() < monticulo[indicePadre].getTimetag()) {
             intercambiar(indiceActual, indicePadre);
             indiceActual = indicePadre;
             indicePadre = getPadre(indiceActual);
@@ -150,15 +150,41 @@ public class MonticuloBinario {
         int hijoIzq = getHijoIzquierdo(indice);
         int hijoDer = getHijoDerecho(indice);
 
-        if (hijoIzq < tamano && monticulo[hijoIzq].getEtiquetaT() < monticulo[indiceMinimo].getEtiquetaT()) {
+        if (hijoIzq < tamano && monticulo[hijoIzq].getTimetag() < monticulo[indiceMinimo].getTimetag()) {
             indiceMinimo = hijoIzq;
         }
-        if (hijoDer < tamano && monticulo[hijoDer].getEtiquetaT() < monticulo[indiceMinimo].getEtiquetaT()) {
+        if (hijoDer < tamano && monticulo[hijoDer].getTimetag() < monticulo[indiceMinimo].getTimetag()) {
             indiceMinimo = hijoDer;
         }
         if (indiceMinimo != indice) {
             intercambiar(indice, indiceMinimo);
             hundir(indiceMinimo); 
         }
+    }
+    
+    /**
+     * Elimina un documento específico de la cola de impresión mediante la alteración de su prioridad.
+     * Como los montículos no poseen una primitiva de eliminación directa, se localiza el registro,
+     * se le asigna la máxima prioridad posible para forzar su ascenso a la raíz, y luego se desecha.
+     *
+     * @param timetagAntigua La etiqueta de tiempo original del documento a eliminar.
+     * @return true si el documento fue encontrado y eliminado, false en caso contrario.
+     */
+    public boolean eliminarDocumento(long timetagAntigua) {
+        int indiceEncontrado = -1;
+
+        for (int i = 0; i < tamano; i++) {
+            if (monticulo[i].getTimetag() == timetagAntigua) {
+                indiceEncontrado = i;
+                break;}
+        }
+        if (indiceEncontrado == -1) {
+            return false;}
+
+        // Alteración de prioridad (Decrease Key), prioridad extrema para forzar el desbalanceo
+        monticulo[indiceEncontrado].setTimetag(Long.MIN_VALUE);
+        flotar(indiceEncontrado);
+        extraerMinimo();
+        return true;
     }
 }

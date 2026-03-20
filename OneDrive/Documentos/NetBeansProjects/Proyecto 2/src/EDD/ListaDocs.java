@@ -5,8 +5,9 @@
 package EDD;
 
 /**
- *
+ * Lista simple enlazada para 
  * @author valen
+ * @param <T>
  */
 public class ListaDocs<T> {
     private NodoLista<T> first;
