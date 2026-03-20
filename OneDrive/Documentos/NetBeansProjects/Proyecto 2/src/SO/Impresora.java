@@ -211,6 +211,37 @@ public class Impresora {
         return eliminado;
     }
     /**
+    * Elimina un usuario del sistema y remueve de forma implícita su colección
+    * de documentos asociados que aún no hayan sido enviados a impresión.
+    *
+    * Los documentos que ya se encuentren en la cola de impresión no son
+    * eliminados por esta operación, ya que continúan siendo gestionados por
+    * el montículo binario y la tabla hash hasta que sean atendidos o cancelados.
+    *
+    * @param nombre nombre del usuario que se desea eliminar.
+    * @return {@code true} si el usuario fue encontrado y eliminado correctamente;
+    *         {@code false} si no existe un usuario registrado con ese nombre.
+    */
+   public boolean eliminarUsuario(String nombre) {
+       NodoLista<Usuario> actual = usuariosRegistrados.getFirst();
+       NodoLista<Usuario> anterior = null;
+
+       while (actual != null) {
+           if (actual.getInfo().getNombre().equals(nombre)) {
+               if (anterior == null) {
+                   usuariosRegistrados.setFirst(actual.getNext());
+               } else {
+                   anterior.setNext(actual.getNext());
+               }
+               return true;
+           }
+           anterior = actual;
+           actual = actual.getNext();
+       }
+
+       return false;
+   }
+    /**
      * Carga usuarios en el sistema a partir de un archivo CSV.
      * La lectura y construcción de la lista se delega a la clase encargada
      * de manejar archivos externos.
