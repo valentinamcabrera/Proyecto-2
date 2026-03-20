@@ -11,12 +11,14 @@ package Modelos;
  * Contiene la información básica del archivo sin referencias a su propietario,
  * permitiendo su encapsulamiento dentro de las estructuras de datos.
  * @author valen
- * @param <T>
  */
-public class Documento<T> {
+public class Documento {
     private String id;
     private int tamano;
     private String tipo;
+    private boolean encola;
+    private int idRegistroActivo;
+
 
     /**
      * Constructor de la clase Documento.
@@ -28,6 +30,8 @@ public class Documento<T> {
         this.id = id;
         this.tamano = tamano;
         this.tipo = tipo;
+        this.encola = false;
+        this.idRegistroActivo=-1;
     }
     /**
      * Retorna el nombre del documento.
@@ -58,6 +62,22 @@ public class Documento<T> {
     }
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+    /**
+     * Indica si documento esta en cola o no
+     * @return 
+     */
+    public boolean isEnCola() { 
+        return encola; 
+    }
+    public void setEnCola(boolean enCola) { 
+        this.encola = enCola; 
+    }
+
+    public int getIdRegistroActivo() { 
+        return idRegistroActivo; }
+    public void setIdRegistroActivo(int idRegistroActivo) {
+        this.idRegistroActivo = idRegistroActivo;
     }
     
 }

@@ -1,6 +1,7 @@
 package Modelos;
 
 import EDD.ListaDocs;
+import EDD.NodoLista;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -34,12 +35,9 @@ public class Usuario {
      * @return 
      */
     public String getNombre() {
-        return nombre;
-    }
-
+        return nombre;}
     public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+        this.nombre = nombre;}
     /**
      * Retorna el tipo de prioridad del usuario.
      * @return 
@@ -47,7 +45,6 @@ public class Usuario {
     public String getTipo() {
         return tipo;
     }
-
     public void setTipo(String tipo) {
         this.tipo = tipo;
     }
@@ -58,6 +55,26 @@ public class Usuario {
     public ListaDocs getDocumentosCreados() {
         return documentosCreados;
     }
+    public Documento buscarDocumento(String idDocumento) {
+        NodoLista<Documento> actual = documentosCreados.getFirst();
+        while (actual != null) {
+            Documento doc = actual.getInfo();
+            if (doc.getId().equals(idDocumento)) return doc;
+            actual = actual.getNext();
+        }
+        return null;
+    }
+    
+     public boolean agregarDocumento(Documento doc) {
+        if (buscarDocumento(doc.getId()) != null) return false;
+        documentosCreados.insertar(doc);
+        return true;
+    }
+     
+    public boolean eliminarDocumentoNoEnviado(String idDocumento) {
+        return documentosCreados.eliminarDocumentoNoEnviado(idDocumento);
+    }
+
 
     
     
