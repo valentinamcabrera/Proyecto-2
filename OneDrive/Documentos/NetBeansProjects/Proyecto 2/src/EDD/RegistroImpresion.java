@@ -19,6 +19,7 @@ public class RegistroImpresion {
     private Documento documento;
     private long timetag; 
     private int indiceHeap;
+    private String claveHash;
     
     /**
      * @param idRegistro identificador único del registro de impresión. Para distinguir 
@@ -29,12 +30,15 @@ public class RegistroImpresion {
      * @param indiceHeap posición actual del registro dentro del arreglo que
      * implementa el montículo binario. Permite ubicar el elemento directamente sin recorrer 
      * linealmente la estructura.
+     * @param claveHash clave  asociada al registro en la tabla hash, para ubicarlo
+     * y eliminarlo del sistema cuando salga de la cola.
      */
-    public RegistroImpresion(int idRegistro, Documento documento, long timetag, int indiceHeap) {
+    public RegistroImpresion(int idRegistro, Documento documento, long timetag, int indiceHeap, String claveHash) {
         this.idRegistro = idRegistro;
         this.documento = documento;
         this.timetag = timetag;
         this.indiceHeap = indiceHeap;
+        this.claveHash = claveHash;
 
     }
     //GETTERS Y SETTERS
@@ -55,7 +59,11 @@ public class RegistroImpresion {
     public int getIndiceHeap() { 
         return indiceHeap; }
     public void setIndiceHeap(int indiceHeap) { 
-        this.indiceHeap = indiceHeap; }
+        this.indiceHeap = indiceHeap; 
+    }
+    public String getClaveHash() {
+    return claveHash;
+}
     
     
     
