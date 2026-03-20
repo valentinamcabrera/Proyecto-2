@@ -15,21 +15,26 @@ import Modelos.Usuario;
  * @author valen
  */
 public class NodoHash {
+    private String clave;
     private Usuario usuario;
-    private Documento documentoEnCola;
-    private long etiqueta;
+    private Documento documento;
+    private RegistroImpresion registro;
     private NodoHash next; 
     /**
      * Constructor del NodoHash.
+     * @param clave Clave única asociada al nodo dentro de la tabla hash.
+     * Se utiliza como identificador de búsqueda para localizar rápidamente
+     * un documento registrado en la cola de impresión.
      * @param usuario El usuario propietario del documento.
-     * @param documentoEnCola La referencia al documento enviado a imprimir.
-     * @param etiqueta valor numérico que identifica la posición o prioridad del 
-     * documento en el Montículo Binario.
+     * @param documento documento asociado al registro.
+     * @param registro La referencia al documento enviado a imprimir.
+     * 
      */
-    public NodoHash(Usuario usuario, Documento documentoEnCola, long etiqueta) {
+    public NodoHash(String clave, Usuario usuario, Documento documento, RegistroImpresion registro) {
+        this.clave = clave;
         this.usuario = usuario;
-        this.documentoEnCola = documentoEnCola;
-        this.etiqueta = etiqueta;
+        this.documento = documento;
+        this.registro = registro;
         this.next = null;
     }
 
@@ -37,26 +42,19 @@ public class NodoHash {
     public Usuario getUsuario() {
         return usuario;
     }
+    public RegistroImpresion getRegistro() {
+        return registro; }
 
-    public Documento getDocumentoEnCola() {
-        return documentoEnCola;
-    }
+    public Documento getDocumento() {
+        return documento;}
 
-    public long getEtiqueta() {
-        return etiqueta;
-    }
-
-    public void setEtiqueta(long etiqueta) {
-        this.etiqueta = etiqueta;
-    }
+    public String getClave() {
+        return clave;}
 
     public NodoHash getNext() {
-        return next;
-    }
-
-    public void setNext(NodoHash next) {
-        this.next = next;
-    }
+        return next;}
     
+    public void setNext(NodoHash next) {
+        this.next = next;}
     
 }

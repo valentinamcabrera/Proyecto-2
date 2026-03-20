@@ -4,6 +4,8 @@
  */
 package EDD;
 
+import Modelos.Documento;
+
 /**
  * Implementación de Lista Enlazada Simple genérica.
  * Sse utiliza para guardar los documentos creados por cada usuario.
@@ -24,7 +26,7 @@ public class ListaDocs<T> {
     }
     /** Inserta un nuevo elemento al final de la lista enlazada.
      * Recorre la estructura hasta encontrar el último nodo y enlaza el nuevo elemento allí.
-     *
+     * Si esta vacia se inserta de primero.
      * @param data El objeto de tipo T que se desea agregar a la lista.
      */
     public void insertar(T data) {
@@ -42,11 +44,12 @@ public class ListaDocs<T> {
     }
     
     /**
-     * Recupera un elemento de la lista dada su posición (índice).
-     * Funciona de manera similar al acceso por índice en un arreglo tradicional.
+     * Obtiene el elemento almacenado en una posición específica de la lista.
+     * El recorrido se realiza desde el primer nodo hasta alcanzar el índice solicitado.
      *
-     * @param indice La posición (basada en cero) del elemento a recuperar.
-     * @return El objeto almacenado en ese índice, o null si el índice está fuera de los límites.
+     *  @param indice posición del elemento a recuperar, basada en cero.
+     * @return el elemento ubicado en el índice indicado, o {@code null} si el índice
+     *         está fuera de los límites válidos de la lista.
      */
     public T obtener(int indice) {
         if (indice < 0 || indice >= tamano) {
@@ -58,8 +61,65 @@ public class ListaDocs<T> {
         }
         return actual.getInfo();
     }
-
     /**
+    * Elimina el elemento ubicado en una posición específica de la lista enlazada.
+    * Si el índice corresponde al primer nodo, la cabeza de la lista se actualiza
+    * al siguiente elemento. En cualquier otro caso, se recorre la estructura hasta
+    * el nodo anterior al índice indicado y se reajustan los enlaces para excluir
+    * el nodo objetivo.
+    *
+    * @param indice posición del elemento que se desea eliminar, basada en cero.
+    * @return {@code true} si el elemento fue eliminado correctamente;
+    *         {@code false} si el índice está fuera de los límites válidos de la lista.
+    */
+     public boolean eliminarPorIndice(int indice) {
+        if (indice < 0 || indice >= tamano) return false;
+        if (indice == 0) {
+            first = first.getNext();
+            tamano--;
+            return true;
+        }
+        NodoLista<T> anterior = first;
+        for (int i = 0; i < indice - 1; i++) {
+            anterior = anterior.getNext();
+        }
+        anterior.setNext(anterior.getNext().getNext());
+        tamano--;
+        return true;
+    }
+   /**
+    * Elimina de la lista un documento que aún no haya sido enviado a la cola de impresión.
+    * El método recorre la estructura buscando un objeto {@code Documento} cuyo identificador
+    * coincida con el recibido y cuyo estado indique que no está actualmente en cola.
+    * Si lo encuentra, reajusta los enlaces de la lista para removerlo.
+    *
+    * @param idDocumento identificador del documento que se desea eliminar.
+    * @return {@code true} si el documento fue encontrado y eliminado correctamente;
+    *         {@code false} si no existe en la lista o si ya fue enviado a impresión.
+    */
+
+      public boolean eliminarDocumentoNoEnviado(String idDocumento) {
+        NodoLista<T> actual = first;
+        NodoLista<T> anterior = null;
+
+        while (actual != null) {
+            if (actual.getInfo() instanceof Documento doc) {
+                if (doc.getId().equals(idDocumento) && !doc.isEnCola()) {
+                    if (anterior == null) {
+                        first = actual.getNext();
+                    } else {
+                        anterior.setNext(actual.getNext());
+                    }
+                    tamano--;
+                    return true;
+                }
+            }
+            anterior = actual;
+            actual = actual.getNext();
+        }
+        return false;
+    }
+      /**
      * Obtiene la cantidad de elementos actualmente almacenados en la lista.
      * @return El tamaño entero de la lista.
      */
@@ -83,5 +143,4 @@ public class ListaDocs<T> {
     public void setFirst(NodoLista<T> first) {
         this.first = first;
     }
-    
 }

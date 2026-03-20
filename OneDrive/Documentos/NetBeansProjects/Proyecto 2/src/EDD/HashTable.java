@@ -11,6 +11,9 @@ import Modelos.Usuario;
  * Implementación de una Tabla de Dispersión (Hash Table) con resolución
  * de colisiones mediante encadenamiento (Separate Chaining).
  * Diseñada para mantener un registro en tiempo O(1) de los documentos enviados por los usuarios.
+ * Cada entrada de la tabla almacena una clave única asociada a un usuario,
+ * un documento y su respectivo registro de impresión, permitiendo ubicar
+ * rápidamente la información necesaria sin recorrer linealmente el montículo binario.
  * @author valen
  */
 public class HashTable {
@@ -18,10 +21,12 @@ public class HashTable {
     private int capacidad;
     private int tamano;
 
-    /**
-     * Constructor
-     * @param capacidad Tamaño del arreglo base. Se exige un número primo (ej. 53, 97) 
-     * para minimizar el agrupamiento de colisiones.
+     /**
+     * Construye una tabla hash vacía con la capacidad indicada.
+     * Inicializa el arreglo interno y deja la estructura lista para almacenar
+     * nodos asociados a documentos en cola de impresión.
+     *
+     * @param capacidad número de posiciones que tendrá la tabla hash.
      */
     public HashTable(int capacidad) {
         this.capacidad = capacidad;
@@ -33,6 +38,8 @@ public class HashTable {
      * Función de dispersión matemática polinomial.
      * @param clave El nombre de usuario que sirve como identificador.
      * @return El índice calculado estrictamente dentro de los límites del arreglo.
+     * Se usa 31 un primo pequeño que ofrece buena dispersión al construir hashes
+     * con bajo costo y uso ampliamente aceptado en implementaciones de Java.
      */
     private int hashFunction(String clave) {
         int hash = 0;
@@ -44,68 +51,74 @@ public class HashTable {
         }
         return hash;
     }
-    /** Inserta un nuevo registro en la tabla. Si ocurre colisión, 
-     * enlaza el nuevo nodo al inicio de la lista correspondiente (O(1)).
-     * @param usuario El propietario del documento.
-     * @param documento El archivo enviado a la cola.
-     * @param timetag El puente lógico que conecta con la posición en el Montículo.
+    /**
+     * Inserta un nuevo registro en la tabla hash.
+     * La entrada creada vincula una clave única con el usuario propietario,
+     * el documento correspondiente y su registro de impresión activo.
+     * Si ocurre una colisión, el nuevo nodo se enlaza al inicio de la lista
+     * asociada a la posición calculada.
+     *
+     * @param clave identificador único utilizado para ubicar el registro.
+     * @param usuario usuario asociado al documento.
+     * @param documento documento que se encuentra registrado en la cola de impresión.
+     * @param registro registro de impresión vinculado al documento dentro del heap.
      */
-    public void insertarRegistro(Usuario usuario, Documento documento, long timetag) {
-        int indice = hashFunction(usuario.getNombre());
-        NodoHash nuevoNodo = new NodoHash(usuario, documento, timetag);
-
-        if (tabla[indice] == null) {
-            tabla[indice] = nuevoNodo;
-        } else {
-            nuevoNodo.setNext(tabla[indice]);
-            tabla[indice] = nuevoNodo;
-        }
+   public void insertarRegistro(String clave, Usuario usuario, Documento documento, RegistroImpresion registro) {
+        int indice = hashFunction(clave);
+        NodoHash nuevo = new NodoHash(clave, usuario, documento, registro);
+        nuevo.setNext(tabla[indice]);
+        tabla[indice] = nuevo;
         tamano++;
     }
 
     /**
-     * Busca la etiqueta de tiempo de un documento específico de un usuario.
-     * Este método es el paso previo y obligatorio para eliminar un nodo del heap
+     * Busca y retorna el nodo completo asociado a una clave dentro de la tabla hash.
+     * El recorrido se realiza únicamente sobre la lista enlazada correspondiente
+     * al índice calculado para esa clave.
      *
-     * @param nombreUsuario El identificador del usuario.
-     * @param nombreDocumento El título del documento a buscar.
-     * @return La etiqueta de tiempo (long) si se encuentra, o -1 si el registro no existe.
+     * @param clave identificador único del registro que se desea buscar.
+     * @return nodo asociado a la clave dada, o {@code null} si no existe.
      */
-    public long buscarEtiquetaDocumento(String nombreUsuario, String nombreDocumento) {
-        int indice = hashFunction(nombreUsuario);
+        public NodoHash buscarNodo(String clave) {
+        int indice = hashFunction(clave);
         NodoHash actual = tabla[indice];
         while (actual != null) {
-            if (actual.getUsuario().getNombre().equals(nombreUsuario) &&
-                actual.getDocumentoEnCola().getId().equals(nombreDocumento)) {
-                return actual.getEtiqueta();
-            }
+            if (actual.getClave().equals(clave)) return actual;
             actual = actual.getNext();
         }
-        return -1; 
+        return null;
     }
-
     /**
-     * Elimina lógicamente un registro de la tabla hash reestructurando los punteros
-     * de la lista enlazada correspondiente.
+     * Busca el registro de impresión asociado a una clave específica.
+     * Este método permite obtener directamente la referencia al registro activo
+     * sin necesidad de manipular externamente el nodo de la tabla hash.
      *
-     * @param nombreUsuario El identificador del usuario.
-     * @param nombreDocumento El título del documento a eliminar.
-     * @return true si la eliminación fue exitosa, false en caso contrario.
+     * @param clave identificador único del registro que se desea localizar.
+     * @return registro de impresión asociado a la clave, o {@code null} si no existe.
      */
-    public boolean eliminarRegistro(String nombreUsuario, String nombreDocumento) {
-        int indice = hashFunction(nombreUsuario);
+    public RegistroImpresion buscarRegistro(String clave) {
+        NodoHash nodo = buscarNodo(clave);
+        return nodo != null ? nodo.getRegistro() : null;
+    }
+    /**
+     * Elimina de la tabla hash el registro asociado a una clave específica.
+     * Si el nodo existe, se reajustan los enlaces de la lista enlazada
+     * correspondiente para excluirlo de la estructura.
+     *
+     * @param clave identificador único del registro que se desea eliminar.
+     * @return {@code true} si el registro fue eliminado correctamente;
+     *         {@code false} si no se encontró ningún nodo con esa clave.
+     */
+    public boolean eliminarRegistro(String clave) {
+        int indice = hashFunction(clave);
         NodoHash actual = tabla[indice];
         NodoHash anterior = null;
 
         while (actual != null) {
-            if (actual.getUsuario().getNombre().equals(nombreUsuario) &&
-                actual.getDocumentoEnCola().getId().equals(nombreDocumento)) {
-                
+            if (actual.getClave().equals(clave)) {
                 if (anterior == null) {
-                    // El nodo a eliminar es la cabeza de la lista
                     tabla[indice] = actual.getNext();
                 } else {
-                    // El nodo a eliminar se encuentra en el medio o al final
                     anterior.setNext(actual.getNext());
                 }
                 tamano--;
