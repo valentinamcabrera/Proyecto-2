@@ -5,9 +5,13 @@
 package SO;
 
 import EDD.HashTable;
+import EDD.ListaDocs;
 import EDD.MonticuloBinario;
+import Interfaz.GestorArchivos;
 import Modelos.Documento;
 import Modelos.Usuario;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * El sistema operativo, controlador principal que gestiona la lógica de negocio 
@@ -18,6 +22,7 @@ import Modelos.Usuario;
 public class Impresora {
     private MonticuloBinario colaImpresion;
     private HashTable tablaDocumentos;
+    private ListaDocs<Usuario> usuariosRegistrados;
     private long reloj;
     
     /**
@@ -27,6 +32,7 @@ public class Impresora {
     public Impresora() {
         this.colaImpresion = new MonticuloBinario(100);
         this.tablaDocumentos = new HashTable(53);
+        this.usuariosRegistrados = new ListaDocs<>();
         this.reloj = 0;
     }
     /**
@@ -92,9 +98,12 @@ public class Impresora {
      * Getter que servira para la interfaz
      * @return 
      */
-    
     public MonticuloBinario getColaImpresion() {
         return colaImpresion;
+    }
+    public void inicializarUsuariosDesdeCSV(File archivo) throws IOException {
+        GestorArchivos lector = new GestorArchivos();
+        this.usuariosRegistrados = lector.cargarUsuarios(archivo);
     }
 
     
