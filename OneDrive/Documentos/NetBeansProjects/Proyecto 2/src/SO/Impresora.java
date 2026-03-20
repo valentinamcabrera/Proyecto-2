@@ -225,6 +225,7 @@ public class Impresora {
    public boolean eliminarUsuario(String nombre) {
        NodoLista<Usuario> actual = usuariosRegistrados.getFirst();
        NodoLista<Usuario> anterior = null;
+       int indice = 0;
 
        while (actual != null) {
            if (actual.getInfo().getNombre().equals(nombre)) {
@@ -237,6 +238,7 @@ public class Impresora {
            }
            anterior = actual;
            actual = actual.getNext();
+           indice++;
        }
 
        return false;
