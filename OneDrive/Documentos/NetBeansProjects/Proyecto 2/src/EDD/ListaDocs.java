@@ -134,12 +134,21 @@ public class ListaDocs<T> {
     public boolean esVacia() { 
         return first == null; 
     }
-
-
+    /**
+     * Obtiene la referencia al primer nodo de la lista.
+     * Este método permite acceder al inicio de la estructura para recorridos externos.
+     *
+     * @return nodo inicial de la lista, o {@code null} si la lista está vacía.
+     */
     public NodoLista<T> getFirst() {
         return first;
     }
-
+    /**
+     * Establece una nueva referencia al primer nodo de la lista.
+     * Se utiliza cuando es necesario modificar manualmente la cabeza de la estructura.
+     *
+     * @param first nuevo nodo que pasará a ser el primero de la lista.
+     */
     public void setFirst(NodoLista<T> first) {
         this.first = first;
     }
